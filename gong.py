@@ -34,7 +34,7 @@ def get_week_current():
     return str(datetime.date.today().isocalendar()[1])
 
 def get_day_of_week_current():
-    return str(datetime.date.today().weekday()+1)
+    return str(datetime.date.today().isoweekday())
 
 def get_template_week(kw):
     for template in get_templates_week_arr():
@@ -61,7 +61,7 @@ def set_template_day(kw, day, template):
 
 def set_template_week(kw, template):
     if template in get_templates_week_arr():
-        shutil.copy("./presets/week"+ template, "./current_config/"+kw)
+        shutil.copytree("./presets/week/"+ template, "./current_config/"+kw, dirs_exist_ok=True)
         return str(True)
     return str(False)
 
@@ -85,7 +85,7 @@ def process_request(data):
         kw, day, template = data.split(",")
         return set_template_day(kw, day, template)
     elif "SET TEMPLATE WEEK" in data:
-        kw, template = data.split("SET TEMPLATE WEEK").split(",")
+        kw, template = data.split("SET TEMPLATE WEEK ")[1].split(",")
         return set_template_week(kw, template)
 
 def start_server():
@@ -118,15 +118,42 @@ def save_day(path, day):
     f.write(string)
     f.close()
 
-def main(): #entry
-    day = datetime.datetime.now().date()
-    t1 = datetime.datetime.now().time()
-    next_gong = null
-    t2 = datetime.datetime(day.year,day.month,day.day,next_gong.hour, next_gong.minute)
-    print(test)
+def string_to_time(kw, day, string):
+    print(string)
+    hour, min = string.split(".")
+    now = datetime.datetime.now()
+    date = datetime.date.fromisocalendar(now.year, int(kw), int(day))
+    return datetime.datetime(now.year, date.month, date.day, int(hour), int(min))
 
+def get_next_gong():
+    day = load_day_unsafe("./current_config/"+get_week_current()+"/"+get_day_of_week_current()+".day")
+    print("./current_config/"+get_week_current()+"/"+get_day_of_week_current()+".day")
+    kw_counter = get_week_current()
+    day_counter = get_day_of_week_current()
+    while True:
+        while True:
+            for line in day:
+                if not string_to_time(kw_counter, day_counter, line) < datetime.datetime.now():
+                    return string_to_time(kw_counter, day_counter, line)
+        if day_counter == 7:
+            day_counter = 0
+            kw_counter += 1
+        day_counter += 1
+    print("ERROR")
+
+        
+
+def main(): #entry
+    while True:
+        day = datetime.datetime.now().date()
+        t1 = datetime.datetime.now()
+        next_gong = get_next_gong()
+        t2 = datetime.datetime(day.year,day.month,day.day,next_gong.hour, next_gong.minute)
+        delay = t2-t1
+        time.sleep(delay.total_seconds())
+
+#main()
 start_server()
 
-main()
 #print(load_day_unsafe("presets/day/normal.day"))
 
