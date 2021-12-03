@@ -45,3 +45,5 @@ margin_top = 28.0
 margin_right = 512.0
 margin_bottom = 38.0
 rect_min_size = Vector2( 0, 10 )
+
+[connection signal="item_selected" from="TopBar/WeekTemplate" to="TopBar/WeekTemplate" method="_item_selected"]
