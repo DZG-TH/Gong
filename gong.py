@@ -6,7 +6,7 @@ import socket
 import shutil
 import filecmp
 from threading import Thread
-
+from playsound import playsound
 
 
 def get_templates_week_arr():
@@ -41,7 +41,7 @@ def get_template_week(kw):
     for template in get_templates_week_arr():
         all_identical = True
         for day in os.listdir("./current_config/" + kw+"/"):
-            if not filecmp.cmp("./presets/week/"+template+"/"+ day, "./current_config/"+kw+"/"+day):
+            if not filecmp.cmp("./presets/week/"+template+"/"+ day, "./current_config/"+kw+"/"+day, shallow=False):
                 all_identical = False
         if all_identical:
             return template
@@ -51,8 +51,8 @@ def get_template_week(kw):
 def get_template_week_day(kw, day):
     for template in get_templates_day_arr():
         if filecmp.cmp("./presets/day/"+template+".day", "./current_config/"+kw+"/"+day+".day", shallow=False):
-            return str(True)
-    return str(False)
+            return template
+    return "CUSTOM"
 
 def set_template_day(kw, day, template):
     if template in get_templates_day_arr():
@@ -129,16 +129,20 @@ def get_next_gong():
     next = datetime.date.today()
     while True:
         while True:
+            gong_left_today = False
             for line in day:
-                if not string_to_time(next, line) < datetime.datetime.now():
+                if string_to_time(next, line) > datetime.datetime.now():
                     return string_to_time(next, line)
-            if day == []:
+                    gong_left_today = True
+            if day == [] or not gong_left_today:
                 next += datetime.timedelta(days=1)
                 day = load_day_unsafe("./current_config/"+str(next.isocalendar()[1])+"/"+str(next.isoweekday())+".day")
+                print("loaded ./current_config/"+str(next.isocalendar()[1])+"/"+str(next.isoweekday())+".day")
                 continue
     print("ERROR")
 
-        
+def play_gong():
+    playsound("Gong_klavier.mp3")
 
 def main(): #entry
     print("started")
@@ -147,6 +151,7 @@ def main(): #entry
         delay = get_next_gong()-datetime.datetime.now()
         print("that is", delay," or ",delay.total_seconds(), "as seconds")
         time.sleep(delay.total_seconds())
+        play_gong()
 
 class ServerThread(Thread):
     def run(self):
