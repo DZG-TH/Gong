@@ -167,5 +167,3 @@ server_thread.start()
 
 main_thread.join()
 
-#print(load_day_unsafe("presets/day/normal.day"))
-
