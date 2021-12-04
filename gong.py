@@ -5,6 +5,7 @@ import datetime
 import socket
 import shutil
 import filecmp
+from threading import Thread
 
 
 
@@ -118,42 +119,53 @@ def save_day(path, day):
     f.write(string)
     f.close()
 
-def string_to_time(kw, day, string):
+def string_to_time(date, string):
     print(string)
     hour, min = string.split(".")
-    now = datetime.datetime.now()
-    date = datetime.date.fromisocalendar(now.year, int(kw), int(day))
-    return datetime.datetime(now.year, date.month, date.day, int(hour), int(min))
+    return datetime.datetime(date.year, date.month, date.day, int(hour), int(min))
 
 def get_next_gong():
     day = load_day_unsafe("./current_config/"+get_week_current()+"/"+get_day_of_week_current()+".day")
-    print("./current_config/"+get_week_current()+"/"+get_day_of_week_current()+".day")
-    kw_counter = get_week_current()
-    day_counter = get_day_of_week_current()
+    print("loaded ./current_config/"+get_week_current()+"/"+get_day_of_week_current()+".day")
+    days_from_today = 0
+    next = datetime.date.today()
     while True:
         while True:
             for line in day:
-                if not string_to_time(kw_counter, day_counter, line) < datetime.datetime.now():
-                    return string_to_time(kw_counter, day_counter, line)
-        if day_counter == 7:
-            day_counter = 0
-            kw_counter += 1
-        day_counter += 1
+                if not string_to_time(next, line) < datetime.datetime.now():
+                    return string_to_time(next, line)
+            if day == []:
+                next += datetime.timedelta(days=1)
+                day = load_day_unsafe("./current_config/"+str(next.isocalendar()[1])+"/"+str(next.isoweekday())+".day")
+                print("continuing", next)
+                days_from_today += 1
+                continue
     print("ERROR")
 
         
 
 def main(): #entry
+    print("started")
     while True:
-        day = datetime.datetime.now().date()
-        t1 = datetime.datetime.now()
-        next_gong = get_next_gong()
-        t2 = datetime.datetime(day.year,day.month,day.day,next_gong.hour, next_gong.minute)
-        delay = t2-t1
+        print("waiting until", str(get_next_gong()))
+        delay = get_next_gong()-datetime.datetime.now()
+        print("that is", delay," or ",delay.total_seconds(), "as seconds")
         time.sleep(delay.total_seconds())
 
-#main()
-start_server()
+class ServerThread(Thread):
+    def run(self):
+        start_server()
+
+class MainThread(Thread):
+    def run(self):
+        main()
+
+main_thread = MainThread()
+main_thread.start()
+server_thread = ServerThread()
+server_thread.start()
+
+main_thread.join()
 
 #print(load_day_unsafe("presets/day/normal.day"))
 
