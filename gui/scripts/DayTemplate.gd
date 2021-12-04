@@ -15,7 +15,6 @@ func _ready():
 		day = int(parent_day.num_day_of_week)
 	else:
 		day = int(parent_day.get_parent().num_day_of_week)
-	pass
 	var item_selected = ServerCommunicator.get_template_week_day(kw, day)
 	var found = false
 	var counter = 0
