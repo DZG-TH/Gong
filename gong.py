@@ -67,7 +67,7 @@ def set_template_week(kw, template):
     return str(False)
 
 def process_request(data):
-    print("processing", data, end="")
+    print("processing",end="")
     if data == "GET TEMPLATES WEEK":
         return get_templates_week()
     elif data == "GET TEMPLATES DAY":
@@ -120,14 +120,12 @@ def save_day(path, day):
     f.close()
 
 def string_to_time(date, string):
-    print(string)
     hour, min = string.split(".")
     return datetime.datetime(date.year, date.month, date.day, int(hour), int(min))
 
 def get_next_gong():
     day = load_day_unsafe("./current_config/"+get_week_current()+"/"+get_day_of_week_current()+".day")
     print("loaded ./current_config/"+get_week_current()+"/"+get_day_of_week_current()+".day")
-    days_from_today = 0
     next = datetime.date.today()
     while True:
         while True:
@@ -137,8 +135,6 @@ def get_next_gong():
             if day == []:
                 next += datetime.timedelta(days=1)
                 day = load_day_unsafe("./current_config/"+str(next.isocalendar()[1])+"/"+str(next.isoweekday())+".day")
-                print("continuing", next)
-                days_from_today += 1
                 continue
     print("ERROR")
 
