@@ -3,7 +3,9 @@ var week = preload("res://scenes/Week.tscn")
 var panel_container = preload("res://scenes/PanelContainer.tscn")
 
 func _ready():
-	#yield(ServerCommunicator, "connected")
+	print("waiting for connection")
+	while !ServerCommunicator.connected:
+		yield(get_tree().create_timer(1.0),"timeout")
 	print("connected")
 	var current_week = ServerCommunicator.get_current_week()
 	for _i in range(0, 53):
@@ -22,4 +24,3 @@ func _ready():
 	container.add_child(current_week_node)
 	$VBoxContainer.add_child(container)
 	$VBoxContainer.move_child(container, 0)
-

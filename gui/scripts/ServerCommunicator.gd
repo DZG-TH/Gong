@@ -1,36 +1,26 @@
 extends Node
 
 
-var week_templates = ["Testwoche", "Normale Woche"]
-var day_templates = ["Testtag", "Normal"]
-var current_week = 50
-var current_day_of_week = 3
+var week_templates = null
+var day_templates = null
+var current_week = null
+var current_day_of_week = null
 
-var udp := PacketPeerUDP.new()
-const SERVER_ADDRESS = "192.168.178.0"
+var udp_send := PacketPeerUDP.new()
+var udp_recv := PacketPeerUDP.new()
+const SERVER_ADDRESS = "127.0.0.1"
 const SERVER_PORT = 4242
-signal connected()
-
-
-
-enum DAY{
-	MONDAY,
-	TUESDAY,
-	WEDNESDAY,
-	THURSTDAY,
-	FRIDAY,
-	SATURDAY,
-	SUNDAY
-}
+const CLIENT_PORT = 4241
+var connected = false
 
 func _ready():
-	udp.connect_to_host(SERVER_ADDRESS, SERVER_PORT) #WICHTIG UDP PORT
-	
+	udp_send.connect_to_host(SERVER_ADDRESS, SERVER_PORT)
+	udp_recv.listen(CLIENT_PORT,"127.0.0.1")
 	get_current_day_of_week()
 	get_current_week()
 	get_day_templates()
 	get_week_templates()
-	emit_signal("connected")
+	connected = true
 
 func get_week_templates():
 	if week_templates == null:
@@ -53,49 +43,50 @@ func get_current_day_of_week():
 	return current_day_of_week
 
 func get_template_week_day(kw: int, day: int ):
-	return "Normal"
+	return make_request("GET TEMPLATE WEEK DAY %s,%s"%[kw, day])
 
 func get_template_week(kw: int):
-	#returns the template of the week 
-	#returns "custom" if cant be matched
-	return "Normal"
+	return make_request("GET TEMPLATE WEEK %s"% kw)
 
 #the following methods return true if it worked serverside
 
-func set_template_day(kw: int, day: int) -> bool:
-	make_request("SET TEMPLATE DAY % %" % [kw, day])
-	return true
+func set_template_day(kw: int, day: int, template: String) -> bool:
+	return bool(make_request("SET TEMPLATE DAY %s,%s,%s" % [kw, day, template]))
 
-func set_template_week(kw: int) -> bool:
-	make_request("SET TEMPLATE WEEK %" % kw)
-	return true
+func set_template_week(kw: int, template: String) -> bool:
+	return bool(make_request("SET TEMPLATE WEEK %s,%s" % [kw, template]))
  
 # may be added in the future
 func add_template_week(name: String, times: Array) -> bool: 
-	#Array stores the day templates 
-	return true
+	return bool(make_request("ADD TEMPLATE WEEK %s,%s"% [name, times]))
 
 # may be added in the future
 func add_template_day(name: String, times: Array) -> bool: 
-	return true
+	return bool(make_request("ADD TEMPLATE DAY %s,%s"%[name, times]))
 
 func make_request(content: String):
-	udp.put_packet(content.to_utf8())
-	while udp.get_available_packet_count() == 0:
-		yield(get_tree().create_timer(0.5),"timeout")
-		print("waiting for packet")
-	var packet_content = udp.get_packet().get_string_from_utf8()
+	print("put packet " + content)
+	udp_send.put_packet(content.to_utf8())
+	while udp_recv.get_available_packet_count() == 0:
+		pass
+	var packet
+	while true:
+		packet = udp_recv.get_packet().get_string_from_utf8()
+		print("recieved" + packet)
+		if packet.split("|")[0] == content:
+			break
+	return packet.split("|")[1]
 	
 func get_week_templates_req():
-	make_request("GET TEMPLATES WEEK")
+	week_templates = make_request("GET TEMPLATES WEEK").split(",")
 	
 
 func get_day_templates_req():
-	make_request("GET TEMPLATES DAY")
+	day_templates = make_request("GET TEMPLATES DAY").split(",")
 
 func get_current_week_req():
-	make_request("GET WEEK CURRENT")
+	current_week = int(make_request("GET WEEK CURRENT"))
 
 func get_current_day_of_week_req():
-	make_request("GET DAY_OF_WEEK CURRENT")
+	current_day_of_week = int(make_request("GET DAY_OF_WEEK CURRENT"))
 

@@ -21,7 +21,10 @@ func _ready():
 		i.name = i.day_of_week
 	$TopBar/KW.text = String(KW)
 	if int(name) == ServerCommunicator.get_current_week():
-		var current_day_node = $MainBar.get_child(ServerCommunicator.get_current_day_of_week()-1)
+		var day_of_week = ServerCommunicator.get_current_day_of_week()
+		if day_of_week == 6 or day_of_week == 7:
+			return
+		var current_day_node = $MainBar.get_child(-1)
 		var old_postion = current_day_node.get_index()
 		$MainBar.remove_child(current_day_node)
 		var container = panel_container.instance()

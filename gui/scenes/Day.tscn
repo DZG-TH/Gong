@@ -23,3 +23,5 @@ margin_right = 1024.0
 margin_bottom = 38.0
 text = "Template Auswählen"
 script = ExtResource( 1 )
+
+[connection signal="item_selected" from="DayTemplate" to="DayTemplate" method="_item_selected"]

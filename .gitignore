@@ -1,3 +1,4 @@
 gui/.build/*
 gui/.import/*
 *.import
+current_config/*
