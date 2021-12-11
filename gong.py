@@ -6,7 +6,6 @@ import socket
 import shutil
 import filecmp
 from threading import Thread
-from playsound import playsound
 
 
 def get_templates_week_arr():
@@ -142,7 +141,7 @@ def get_next_gong():
     print("ERROR")
 
 def play_gong():
-    playsound("Gong_klavier.mp3")
+    os.system("mpg321 Gong_klavier.mp3")
 
 def main(): #entry
     print("started")
