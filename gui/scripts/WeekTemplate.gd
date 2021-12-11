@@ -22,3 +22,20 @@ func _ready():
 
 func _item_selected(index: int):
 	ServerCommunicator.set_template_week(get_parent().get_parent().KW, get_item_text(index))
+	var parent_parent = get_parent().get_parent()
+	var mainbar = get_parent().get_parent().get_node("MainBar")
+	for child in mainbar.get_children():
+		if child.get_script() == null:
+			child = child.get_child(0)
+		var selector = child.get_node("DayTemplate")
+		print("selector:", selector)
+		var template = ServerCommunicator.get_template_week_day(int(parent_parent.KW), int(child.num_day_of_week))
+		print("template", template)
+		if template == "Custom":
+			selector.add_item(template, -1)
+			select(get_item_index(-1))
+		for i in selector.get_item_count():
+			if selector.get_item_text(i) == template:
+				selector.select(i)
+				break
+
