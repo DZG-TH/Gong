@@ -31,3 +31,18 @@ func _ready():
 
 func _item_selected(index):
 	ServerCommunicator.set_template_day(kw, get_parent().num_day_of_week, get_item_text(index))
+	var parent_week = get_parent().get_parent().get_parent()
+	if parent_week.get_script() == null:
+		parent_week = parent_week.get_parent()
+		if parent_week.get_script() == null:
+			parent_week = parent_week.get_parent()
+	var selector = parent_week.get_node("TopBar/WeekTemplate")
+	var template = ServerCommunicator.get_template_week(parent_week.KW)
+	print("TEST", template)
+	for i in selector.get_item_count():
+		if selector.get_item_text(i) == template:
+			selector.select(i)
+			return
+	if template == "Custom":
+		selector.add_item(template, -1)
+		select(get_item_index(-1))

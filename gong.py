@@ -6,7 +6,6 @@ import socket
 import shutil
 import filecmp
 from threading import Thread
-from playsound import playsound
 
 
 def get_templates_week_arr():
@@ -45,14 +44,14 @@ def get_template_week(kw):
                 all_identical = False
         if all_identical:
             return template
-    return "CUSTOM" # this should not happen
+    return "Custom" # this should not happen
         
 
 def get_template_week_day(kw, day):
     for template in get_templates_day_arr():
         if filecmp.cmp("./presets/day/"+template+".day", "./current_config/"+kw+"/"+day+".day", shallow=False):
             return template
-    return "CUSTOM"
+    return "Custom"
 
 def set_template_day(kw, day, template):
     if template in get_templates_day_arr():
@@ -142,7 +141,7 @@ def get_next_gong():
     print("ERROR")
 
 def play_gong():
-    playsound("Gong_klavier.mp3")
+    os.system("mpg321 Gong_klavier.mp3")
 
 def main(): #entry
     print("started")
