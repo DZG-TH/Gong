@@ -90,3 +90,6 @@ func get_current_week_req():
 func get_current_day_of_week_req():
 	current_day_of_week = int(make_request("GET DAY_OF_WEEK CURRENT"))
 
+func play_gong():
+	return bool(make_request("PLAY GONG"))
+

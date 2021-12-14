@@ -87,6 +87,9 @@ def process_request(data):
     elif "SET TEMPLATE WEEK" in data:
         kw, template = data.split("SET TEMPLATE WEEK ")[1].split(",")
         return set_template_week(kw, template)
+    elif data == "PLAY GONG":
+        play_gong()
+        return str(True)
 
 def start_server():
     UDP_IP_ADRESS = "127.0.0.1"
