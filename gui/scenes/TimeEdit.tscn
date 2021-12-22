@@ -1,0 +1,39 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://scripts/TimeEdit.gd" type="Script" id=1]
+
+[node name="TimeEdit" type="HBoxContainer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Hour" type="SpinBox" parent="."]
+margin_right = 74.0
+margin_bottom = 600.0
+max_value = 23.0
+rounded = true
+
+[node name="Colon" type="Label" parent="."]
+margin_left = 78.0
+margin_top = 293.0
+margin_right = 82.0
+margin_bottom = 307.0
+text = ":"
+
+[node name="Minute" type="SpinBox" parent="."]
+margin_left = 86.0
+margin_right = 160.0
+margin_bottom = 600.0
+max_value = 59.0
+rounded = true
+
+[node name="Remove" type="Button" parent="."]
+margin_left = 164.0
+margin_right = 181.0
+margin_bottom = 600.0
+text = "-"
+
+[connection signal="pressed" from="Remove" to="." method="_on_Remove_pressed"]

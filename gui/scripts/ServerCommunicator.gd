@@ -56,13 +56,29 @@ func set_template_day(kw: int, day: int, template: String) -> bool:
 func set_template_week(kw: int, template: String) -> bool:
 	return bool(make_request("SET TEMPLATE WEEK %s,%s" % [kw, template]))
  
-# may be added in the future
-func add_template_week(name: String, times: Array) -> bool: 
-	return bool(make_request("ADD TEMPLATE WEEK %s,%s"% [name, times]))
-
-# may be added in the future
 func add_template_day(name: String, times: Array) -> bool: 
-	return bool(make_request("ADD TEMPLATE DAY %s,%s"%[name, times]))
+	var lines = array_to_lines(times)
+	day_templates = null
+	return bool(make_request("SET CHANGE TEMPLATE DAY %s,%s" % [name, lines]))
+
+func add_template_week(name: String, day_templates: Array) -> bool:
+	var lines = array_to_lines(day_templates)
+	return bool(make_request("SET CHANGE TEMPLATE WEEK %s,%s" % [name, lines]))
+
+func remove_template_day(name: String) -> bool:
+	return add_template_day(name, [])
+
+func remove_template_week(name: String) -> bool:
+	return add_template_week(name, [])
+
+func get_info_template_day(name: String) -> Array:
+	var answer = make_request("GET CHANGE TEMPLATE DAY %s"%name)
+	return answer.split("\n")
+
+func get_info_template_week(name: String) -> Array:
+	var answer = make_request("GET CHANGE TEMPLATE WEEK  %s"%name)
+	week_templates = null
+	return answer.split("\n")
 
 func make_request(content: String):
 	print("put packet " + content)
@@ -76,20 +92,24 @@ func make_request(content: String):
 		if packet.split("|")[0] == content:
 			break
 	return packet.split("|")[1]
-	
-func get_week_templates_req():
-	week_templates = make_request("GET TEMPLATES WEEK").split(",")
-	
 
 func get_day_templates_req():
 	day_templates = make_request("GET TEMPLATES DAY").split(",")
 
-func get_current_week_req():
-	current_week = int(make_request("GET WEEK CURRENT"))
+func get_week_templates_req():
+	week_templates = make_request("GET TEMPLATES WEEK").split(",")
 
 func get_current_day_of_week_req():
 	current_day_of_week = int(make_request("GET DAY_OF_WEEK CURRENT"))
 
+func get_current_week_req():
+	current_week = int(make_request("GET WEEK CURRENT"))
+
 func play_gong():
 	return bool(make_request("PLAY GONG"))
 
+func array_to_lines(arr: Array) -> String:
+	var lines := ""
+	for line in arr:
+		lines += "\n" + line
+	return lines

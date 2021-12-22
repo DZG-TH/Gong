@@ -1,0 +1,43 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://scripts/TemplateEdit.gd" type="Script" id=1]
+
+[node name="TemplateEdit" type="PanelContainer"]
+margin_right = 14.0
+margin_bottom = 14.0
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+margin_left = 7.0
+margin_top = 7.0
+margin_right = 317.0
+margin_bottom = 41.0
+
+[node name="Edit" type="PanelContainer" parent="HBoxContainer"]
+margin_right = 159.0
+margin_bottom = 34.0
+
+[node name="Button" type="MenuButton" parent="HBoxContainer/Edit"]
+margin_left = 7.0
+margin_top = 7.0
+margin_right = 152.0
+margin_bottom = 27.0
+text = "Template bearbeiten"
+items = [ "Woche", null, 0, false, false, 0, 0, null, "", false, "Tag", null, 0, false, false, 1, 0, null, "", false ]
+
+[node name="Create" type="PanelContainer" parent="HBoxContainer"]
+margin_left = 163.0
+margin_right = 310.0
+margin_bottom = 34.0
+
+[node name="Button" type="MenuButton" parent="HBoxContainer/Create"]
+margin_left = 7.0
+margin_top = 7.0
+margin_right = 140.0
+margin_bottom = 27.0
+focus_mode = 2
+text = "Template erstellen"
+items = [ "Woche", null, 0, false, false, 0, 0, null, "", false, "Tag", null, 0, false, false, 1, 0, null, "", false ]

@@ -65,6 +65,25 @@ def set_template_week(kw, template):
         return str(True)
     return str(False)
 
+def set_change_template_week(name, day_templates):
+    print("set change template week", name, day_templates)
+    if not os.path.exists("./presets/"+ name):
+        os.mkdir("./presets/week/"+name)
+    day = 1
+    for template in day_templates:
+        shutil.copy("./presets/day/"+template+".day", "./presets/week/"+name+"/"+str(day)+".day")
+        day += 1
+    open("./presets/week/"+name+"/6.day","a").close()
+    open("./presets/week/"+name+"/7.day","a").close()
+    return str(True)
+
+def set_change_template_day(name, times):
+    if not os.path.exists("./presets/day/"+name+".day"):
+        open("./presets/day/"+name+".day","a").close()
+    for time in times:
+        save_day("./presets/day/"+name+".day", times)
+    return str(True)
+
 def process_request(data):
     print("processing",end="")
     if data == "GET TEMPLATES WEEK":
@@ -87,6 +106,16 @@ def process_request(data):
     elif "SET TEMPLATE WEEK" in data:
         kw, template = data.split("SET TEMPLATE WEEK ")[1].split(",")
         return set_template_week(kw, template)
+    elif "SET CHANGE TEMPLATE WEEK" in data:
+        data = data.split("SET CHANGE TEMPLATE WEEK ")[1]
+        day_templates = data.split(",")[1].split("\n")
+        day_templates.pop(0)
+        return set_change_template_week(data.split(",")[0],day_templates)
+    elif "SET CHANGE TEMPLATE DAY" in data:
+        data = data.split("SET CHANGE TEMPLATE DAY ")[1]
+        times = data.split(",")[1].split("\n")
+        times.pop(0)
+        return set_change_template_day(data.split(",")[0], times)
     elif data == "PLAY GONG":
         play_gong()
         return str(True)
@@ -117,7 +146,7 @@ def save_day(path, day):
     f = open(path, "w")
     string = ""
     for i in day:
-        string += i + "/n"
+        string += i + "\n"
     f.write(string)
     f.close()
 
