@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://scripts/Main.gd" type="Script" id=1]
 [ext_resource path="res://scenes/Manual.tscn" type="PackedScene" id=2]
+[ext_resource path="res://scenes/TemplateEdit.tscn" type="PackedScene" id=3]
 
 [node name="Control" type="Control"]
 anchor_right = 1.0
@@ -21,8 +22,22 @@ __meta__ = {
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Control"]
 
-[node name="Control2" parent="." instance=ExtResource( 2 )]
-anchor_left = 1.0
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+anchor_right = 1.0
+alignment = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Control2" parent="HBoxContainer" instance=ExtResource( 2 )]
+anchor_right = 0.0
 anchor_bottom = 0.0
-margin_right = -10.0
+margin_left = 637.0
+margin_right = 696.0
+margin_bottom = 48.0
 grow_horizontal = 0
+
+[node name="PanelContainer" parent="HBoxContainer" instance=ExtResource( 3 )]
+margin_left = 700.0
+margin_right = 1024.0
+margin_bottom = 48.0

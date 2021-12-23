@@ -1,0 +1,57 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://scripts/TemplateEditDay.gd" type="Script" id=1]
+
+[node name="TemplateEditDay" type="WindowDialog"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Name" type="LineEdit" parent="VBoxContainer"]
+margin_right = 1024.0
+margin_bottom = 24.0
+align = 1
+placeholder_text = "Geben sie dem Template einen Namen"
+
+[node name="TimesContainer" type="VBoxContainer" parent="VBoxContainer"]
+margin_top = 28.0
+margin_right = 1024.0
+margin_bottom = 28.0
+
+[node name="SaveOrAdd" type="HBoxContainer" parent="VBoxContainer"]
+margin_top = 32.0
+margin_right = 1024.0
+margin_bottom = 52.0
+alignment = 1
+
+[node name="Add" type="Button" parent="VBoxContainer/SaveOrAdd"]
+margin_left = 462.0
+margin_right = 482.0
+margin_bottom = 20.0
+text = "+"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Speichern" type="Button" parent="VBoxContainer/SaveOrAdd"]
+margin_left = 486.0
+margin_right = 561.0
+margin_bottom = 20.0
+text = "speichern"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[connection signal="popup_hide" from="." to="." method="_on_popup_hide"]
+[connection signal="pressed" from="VBoxContainer/SaveOrAdd/Add" to="." method="_on_Add_pressed"]
+[connection signal="pressed" from="VBoxContainer/SaveOrAdd/Speichern" to="." method="_on_save_pressed"]
