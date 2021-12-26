@@ -10,9 +10,10 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="VBoxContainer" type="VSplitContainer" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
+dragger_visibility = 2
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -23,18 +24,26 @@ margin_bottom = 24.0
 align = 1
 placeholder_text = "Geben sie dem Template einen Namen"
 
-[node name="TimesContainer" type="VBoxContainer" parent="VBoxContainer"]
-margin_top = 28.0
+[node name="TimesContainer" type="ScrollContainer" parent="VBoxContainer"]
+margin_top = 24.0
 margin_right = 1024.0
-margin_bottom = 28.0
+margin_bottom = 600.0
+scroll_horizontal_enabled = false
 
-[node name="SaveOrAdd" type="HBoxContainer" parent="VBoxContainer"]
-margin_top = 32.0
-margin_right = 1024.0
-margin_bottom = 52.0
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/TimesContainer"]
 alignment = 1
 
-[node name="Add" type="Button" parent="VBoxContainer/SaveOrAdd"]
+[node name="SaveOrAdd" type="HBoxContainer" parent="."]
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_vertical = 0
+alignment = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Add" type="Button" parent="SaveOrAdd"]
 margin_left = 462.0
 margin_right = 482.0
 margin_bottom = 20.0
@@ -43,7 +52,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Speichern" type="Button" parent="VBoxContainer/SaveOrAdd"]
+[node name="Speichern" type="Button" parent="SaveOrAdd"]
 margin_left = 486.0
 margin_right = 561.0
 margin_bottom = 20.0
@@ -53,5 +62,5 @@ __meta__ = {
 }
 
 [connection signal="popup_hide" from="." to="." method="_on_popup_hide"]
-[connection signal="pressed" from="VBoxContainer/SaveOrAdd/Add" to="." method="_on_Add_pressed"]
-[connection signal="pressed" from="VBoxContainer/SaveOrAdd/Speichern" to="." method="_on_save_pressed"]
+[connection signal="pressed" from="SaveOrAdd/Add" to="." method="_on_Add_pressed"]
+[connection signal="pressed" from="SaveOrAdd/Speichern" to="." method="_on_save_pressed"]

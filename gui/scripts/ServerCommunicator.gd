@@ -13,6 +13,9 @@ const SERVER_PORT = 4242
 const CLIENT_PORT = 4241
 var connected = false
 
+signal week_templates_updated()
+signal day_templates_updated()
+
 func _ready():
 	udp_send.connect_to_host(SERVER_ADDRESS, SERVER_PORT)
 	udp_recv.listen(CLIENT_PORT,"127.0.0.1")
@@ -72,13 +75,14 @@ func remove_template_week(name: String) -> bool:
 	return add_template_week(name, [])
 
 func get_info_template_day(name: String) -> Array:
-	var answer = make_request("GET CHANGE TEMPLATE DAY %s"%name)
-	return answer.split("\n")
+	var answer = make_request("GET INFO TEMPLATE DAY %s"%name)
+	day_templates = null
+	return answer.split(",")
 
 func get_info_template_week(name: String) -> Array:
-	var answer = make_request("GET CHANGE TEMPLATE WEEK  %s"%name)
+	var answer = make_request("GET INFO TEMPLATE WEEK  %s"%name)
 	week_templates = null
-	return answer.split("\n")
+	return answer.split(",")
 
 func make_request(content: String):
 	print("put packet " + content)
@@ -113,3 +117,15 @@ func array_to_lines(arr: Array) -> String:
 	for line in arr:
 		lines += "\n" + line
 	return lines
+
+func update_week_templates():
+	var old_templates = get_week_templates()
+	week_templates = null
+	if old_templates != get_week_templates():
+		emit_signal("week_templates_updated")
+
+func update_day_templates():
+	var old_templates = get_day_templates()
+	day_templates = null
+	if old_templates != get_day_templates():
+		emit_signal("day_templates_updated")

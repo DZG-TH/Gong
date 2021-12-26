@@ -84,6 +84,34 @@ def set_change_template_day(name, times):
         save_day("./presets/day/"+name+".day", times)
     return str(True)
 
+def get_info_template_week(name):
+    print(name)
+    week_templates = get_templates_week_arr()
+    if name in week_templates:
+        templates = []
+        for path in range(0,7):
+            matches_one_template = False
+            for template in get_templates_day_arr():
+                if filecmp.cmp("./presets/day/"+template+".day", "./presets/week/"+name+"/"+str(path+1)+".day", shallow=False):
+                    templates.append(template)
+                    matches_one_template = True
+            if not matches_one_template:
+                templates.append("CUSTOM")
+        print(templates)
+        as_string = ""
+        for i in templates:
+            as_string += i+ ","
+        return as_string.rstrip(",")
+
+    return "FAILED"
+
+def get_info_template_day(name):
+    day = load_day_unsafe("./presets/day/"+name+".day")
+    as_string = ""
+    for i in day:
+        as_string += i + ","
+    return as_string.rstrip(",")
+
 def process_request(data):
     print("processing",end="")
     if data == "GET TEMPLATES WEEK":
@@ -116,6 +144,12 @@ def process_request(data):
         times = data.split(",")[1].split("\n")
         times.pop(0)
         return set_change_template_day(data.split(",")[0], times)
+    elif "GET INFO TEMPLATE DAY " in data:
+        data = data.split("GET INFO TEMPLATE DAY ")[1]
+        return get_info_template_day(data)
+    elif "GET INFO TEMPLATE WEEK " in data:
+        data = data.split("GET INFO TEMPLATE WEEK ")[1].strip()
+        return get_info_template_week(data)
     elif data == "PLAY GONG":
         play_gong()
         return str(True)
