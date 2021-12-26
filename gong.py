@@ -66,7 +66,6 @@ def set_template_week(kw, template):
     return str(False)
 
 def set_change_template_week(name, day_templates):
-    print("set change template week", name, day_templates)
     if not os.path.exists("./presets/week/"+ name):
         os.mkdir("./presets/week/"+name)
     day = 1
@@ -85,7 +84,6 @@ def set_change_template_day(name, times):
     return str(True)
 
 def get_info_template_week(name):
-    print(name)
     week_templates = get_templates_week_arr()
     if name in week_templates:
         templates = []
@@ -97,7 +95,6 @@ def get_info_template_week(name):
                     matches_one_template = True
             if not matches_one_template:
                 templates.append("CUSTOM")
-        print(templates)
         as_string = ""
         for i in templates:
             as_string += i+ ","
