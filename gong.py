@@ -67,7 +67,7 @@ def set_template_week(kw, template):
 
 def set_change_template_week(name, day_templates):
     print("set change template week", name, day_templates)
-    if not os.path.exists("./presets/"+ name):
+    if not os.path.exists("./presets/week/"+ name):
         os.mkdir("./presets/week/"+name)
     day = 1
     for template in day_templates:
