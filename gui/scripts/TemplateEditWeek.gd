@@ -34,6 +34,8 @@ func _on_save_pressed():
 		var template_selector = day.get_node("DayTemplate")
 		arr.append(template_selector.get_item_text(template_selector.selected))
 	ServerCommunicator.add_template_week($VBoxContainer/Name.text, arr)
+	yield(get_tree().create_timer(1.0), "timeout")
+	ServerCommunicator.update_week_templates()
 
 func _on_popup_hide():
 	queue_free()

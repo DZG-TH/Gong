@@ -32,6 +32,8 @@ func _on_save_pressed():
 		arr.append(hour+"."+minute)
 	var worked = ServerCommunicator.add_template_day(get_template_name(), arr)
 	print("saved:", worked)
+	yield(get_tree().create_timer(1.0), "timeout")
+	ServerCommunicator.update_day_templates()
 
 
 func _on_popup_hide():

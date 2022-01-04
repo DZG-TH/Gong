@@ -66,6 +66,7 @@ func add_template_day(name: String, times: Array) -> bool:
 
 func add_template_week(name: String, day_templates: Array) -> bool:
 	var lines = array_to_lines(day_templates)
+	week_templates = null
 	return bool(make_request("SET CHANGE TEMPLATE WEEK %s,%s" % [name, lines]))
 
 func remove_template_day(name: String) -> bool:
@@ -119,13 +120,15 @@ func array_to_lines(arr: Array) -> String:
 	return lines
 
 func update_week_templates():
-	var old_templates = get_week_templates()
+	var old_templates = week_templates
 	week_templates = null
+	yield(get_tree().create_timer(1.0), "timeout")
 	if old_templates != get_week_templates():
 		emit_signal("week_templates_updated")
 
 func update_day_templates():
-	var old_templates = get_day_templates()
+	var old_templates = day_templates
 	day_templates = null
+	yield(get_tree().create_timer(1.0), "timeout")
 	if old_templates != get_day_templates():
 		emit_signal("day_templates_updated")
