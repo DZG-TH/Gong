@@ -41,7 +41,7 @@ func get_current_week():
 	return current_week
 	
 func get_current_day_of_week():
-	if current_week == null:
+	if current_day_of_week == null:
 		get_current_day_of_week_req()
 	return current_day_of_week
 
