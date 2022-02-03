@@ -5,7 +5,8 @@ import datetime
 import socket
 import shutil
 import filecmp
-from threading import Thread
+import threading
+import multiprocessing
 
 
 def get_templates_week_arr():
@@ -109,7 +110,7 @@ def get_info_template_day(name):
         as_string += i + ","
     return as_string.rstrip(",")
 
-def process_request(data):
+def process_request(data, pipe):
     print("processing",end="")
     if data == "GET TEMPLATES WEEK":
         return get_templates_week()
@@ -127,19 +128,23 @@ def process_request(data):
     elif "SET TEMPLATE DAY" in data:
         data = data.split("SET TEMPLATE DAY ")[1]
         kw, day, template = data.split(",")
+        pipe.send_bytes(b"")
         return set_template_day(kw, day, template)
     elif "SET TEMPLATE WEEK" in data:
         kw, template = data.split("SET TEMPLATE WEEK ")[1].split(",")
+        pipe.send_bytes(b"")
         return set_template_week(kw, template)
     elif "SET CHANGE TEMPLATE WEEK" in data:
         data = data.split("SET CHANGE TEMPLATE WEEK ")[1]
         day_templates = data.split(",")[1].split("\n")
         day_templates.pop(0)
+        pipe.send_bytes(b"")
         return set_change_template_week(data.split(",")[0],day_templates)
     elif "SET CHANGE TEMPLATE DAY" in data:
         data = data.split("SET CHANGE TEMPLATE DAY ")[1]
         times = data.split(",")[1].split("\n")
         times.pop(0)
+        pipe.send_bytes(b"")
         return set_change_template_day(data.split(",")[0], times)
     elif "GET INFO TEMPLATE DAY " in data:
         data = data.split("GET INFO TEMPLATE DAY ")[1]
@@ -151,7 +156,7 @@ def process_request(data):
         play_gong()
         return str(True)
 
-def start_server():
+def start_server(pipe):
     UDP_IP_ADRESS = "127.0.0.1"
     UDP_PORT_NO = 4242
 
@@ -161,7 +166,7 @@ def start_server():
         data, addr = serverSock.recvfrom(1024)
         data = data.decode()
         print("Message: ", data,"From:", addr, end="")
-        data_to_send = process_request(data)
+        data_to_send = process_request(data, pipe)
         serverSock.sendto(str.encode(data+"|"+data_to_send),("127.0.0.1", 4241))
         print("sent:", str.encode(data_to_send))
 
@@ -215,18 +220,16 @@ def main(): #entry
         time.sleep(delay.total_seconds())
         play_gong()
 
-class ServerThread(Thread):
-    def run(self):
-        start_server()
-
-class MainThread(Thread):
-    def run(self):
-        main()
-
-main_thread = MainThread()
+main_thread = multiprocessing.Process(target=main, name="main_thread")
 main_thread.start()
-server_thread = ServerThread()
+(recieve, transmit) = multiprocessing.Pipe()
+server_thread = multiprocessing.Process(target=start_server, name="server_thread", args=[transmit])
 server_thread.start()
-
-main_thread.join()
+while True:
+    recieve.recv_bytes()
+    print("")
+    print("something was updated, restarting timer")
+    main_thread.terminate()
+    main_thread = multiprocessing.Process(target=main, name="main_thread")
+    main_thread.start()
 
