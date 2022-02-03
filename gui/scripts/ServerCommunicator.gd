@@ -13,6 +13,11 @@ const SERVER_PORT = 4242
 const CLIENT_PORT = 4241
 var connected = false
 
+signal week_templates_updated()
+signal day_templates_updated()
+signal current_week_updated()
+signal current_day_of_week_updated()
+
 func _ready():
 	udp_send.connect_to_host(SERVER_ADDRESS, SERVER_PORT)
 	udp_recv.listen(CLIENT_PORT,"127.0.0.1")
@@ -38,7 +43,7 @@ func get_current_week():
 	return current_week
 	
 func get_current_day_of_week():
-	if current_week == null:
+	if current_day_of_week == null:
 		get_current_day_of_week_req()
 	return current_day_of_week
 
@@ -63,6 +68,7 @@ func add_template_day(name: String, times: Array) -> bool:
 
 func add_template_week(name: String, day_templates: Array) -> bool:
 	var lines = array_to_lines(day_templates)
+	week_templates = null
 	return bool(make_request("SET CHANGE TEMPLATE WEEK %s,%s" % [name, lines]))
 
 func remove_template_day(name: String) -> bool:
@@ -72,13 +78,14 @@ func remove_template_week(name: String) -> bool:
 	return add_template_week(name, [])
 
 func get_info_template_day(name: String) -> Array:
-	var answer = make_request("GET CHANGE TEMPLATE DAY %s"%name)
-	return answer.split("\n")
+	var answer = make_request("GET INFO TEMPLATE DAY %s"%name)
+	day_templates = null
+	return answer.split(",")
 
 func get_info_template_week(name: String) -> Array:
-	var answer = make_request("GET CHANGE TEMPLATE WEEK  %s"%name)
+	var answer = make_request("GET INFO TEMPLATE WEEK  %s"%name)
 	week_templates = null
-	return answer.split("\n")
+	return answer.split(",")
 
 func make_request(content: String):
 	print("put packet " + content)
@@ -113,3 +120,32 @@ func array_to_lines(arr: Array) -> String:
 	for line in arr:
 		lines += "\n" + line
 	return lines
+
+func update_week_templates():
+	var old_templates = week_templates
+	week_templates = null
+	yield(get_tree().create_timer(1.0), "timeout")
+	if old_templates != get_week_templates():
+		emit_signal("week_templates_updated")
+
+func update_day_templates():
+	var old_templates = day_templates
+	day_templates = null
+	yield(get_tree().create_timer(1.0), "timeout")
+	if old_templates != get_day_templates():
+		emit_signal("day_templates_updated")
+
+func update_current_week():
+	var old_week = current_week
+	current_week = null
+	if old_week != get_current_week():
+		emit_signal("current_week_updated")
+
+func update_current_day_of_week():
+	var old_day = current_day_of_week
+	current_day_of_week = null
+	if old_day == 7:
+		update_current_week()
+		yield(get_tree().create_timer(5.0),"timeout") #really necessary ?
+	if old_day != get_current_day_of_week():
+		emit_signal("current_day_of_week_updated")

@@ -4,27 +4,18 @@
 [ext_resource path="res://scenes/Manual.tscn" type="PackedScene" id=2]
 [ext_resource path="res://scenes/TemplateEdit.tscn" type="PackedScene" id=3]
 
-[node name="Control" type="Control"]
+[node name="Control" type="VSplitContainer"]
 anchor_right = 1.0
 anchor_bottom = 1.0
+dragger_visibility = 2
 __meta__ = {
 "_edit_use_anchors_": false
 }
-
-[node name="Control" type="ScrollContainer" parent="."]
-anchor_right = 1.0
-anchor_bottom = 1.0
-scroll_horizontal_enabled = false
-script = ExtResource( 1 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="VBoxContainer" type="VBoxContainer" parent="Control"]
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
-anchor_right = 1.0
-alignment = 2
+margin_right = 1024.0
+margin_bottom = 48.0
+grow_horizontal = 0
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -32,12 +23,24 @@ __meta__ = {
 [node name="Control2" parent="HBoxContainer" instance=ExtResource( 2 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_left = 637.0
-margin_right = 696.0
+margin_right = 59.0
 margin_bottom = 48.0
 grow_horizontal = 0
 
 [node name="PanelContainer" parent="HBoxContainer" instance=ExtResource( 3 )]
-margin_left = 700.0
-margin_right = 1024.0
+margin_left = 63.0
+margin_right = 387.0
 margin_bottom = 48.0
+
+[node name="Control" type="ScrollContainer" parent="."]
+margin_top = 48.0
+margin_right = 1024.0
+margin_bottom = 600.0
+scroll_horizontal_enabled = false
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control"]
+alignment = 1

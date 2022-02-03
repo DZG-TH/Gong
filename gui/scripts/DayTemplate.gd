@@ -3,6 +3,10 @@ var kw
 
 func _ready():
 	yield(get_tree().create_timer(0.5),"timeout")
+	ServerCommunicator.connect("day_templates_updated", self, "_update_templates")
+	_update_templates()
+	
+func _update_templates():
 	var templates = ServerCommunicator.get_day_templates()
 	var parent_parent = get_parent().get_parent().get_parent()
 	if !parent_parent.name.is_valid_integer():
@@ -18,6 +22,7 @@ func _ready():
 	var item_selected = ServerCommunicator.get_template_week_day(kw, day)
 	var found = false
 	var counter = 0
+	clear()
 	for template in templates:
 		add_item(template, counter)
 		counter += 1

@@ -28,6 +28,18 @@ margin_bottom = 27.0
 text = "Template bearbeiten"
 items = [ "Woche", null, 0, false, false, 0, 0, null, "", false, "Tag", null, 0, false, false, 1, 0, null, "", false ]
 
+[node name="Weeks" type="PopupMenu" parent="HBoxContainer/Edit"]
+margin_left = 7.0
+margin_top = 7.0
+margin_right = 152.0
+margin_bottom = 27.0
+
+[node name="Days" type="PopupMenu" parent="HBoxContainer/Edit"]
+margin_left = 7.0
+margin_top = 7.0
+margin_right = 152.0
+margin_bottom = 27.0
+
 [node name="Create" type="PanelContainer" parent="HBoxContainer"]
 margin_left = 163.0
 margin_right = 310.0
