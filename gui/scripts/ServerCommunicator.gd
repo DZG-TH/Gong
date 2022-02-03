@@ -15,6 +15,8 @@ var connected = false
 
 signal week_templates_updated()
 signal day_templates_updated()
+signal current_week_updated()
+signal current_day_of_week_updated()
 
 func _ready():
 	udp_send.connect_to_host(SERVER_ADDRESS, SERVER_PORT)
@@ -132,3 +134,18 @@ func update_day_templates():
 	yield(get_tree().create_timer(1.0), "timeout")
 	if old_templates != get_day_templates():
 		emit_signal("day_templates_updated")
+
+func update_current_week():
+	var old_week = current_week
+	current_week = null
+	if old_week != get_current_week():
+		emit_signal("current_week_updated")
+
+func update_current_day_of_week():
+	var old_day = current_day_of_week
+	current_day_of_week = null
+	if old_day == 7:
+		update_current_week()
+		yield(get_tree().create_timer(5.0),"timeout") #really necessary ?
+	if old_day != get_current_day_of_week():
+		emit_signal("current_day_of_week_updated")
