@@ -23,7 +23,7 @@ Dafür macht das Script folgendes:
 4. Wartet die in 4. errechnete Zeit
 5. spielt den Gong ab
 6. beginnt von neuem
-#### ServerThread
+### ServerThread
 Der ServerThread ist dafür zuständig die Änderungen die am Zeitplan gemacht werden in die Dateien (current_config) einzutragen. Ebenso trägt er auch die Änderungen an templates (presets Ordner (Namensänderung zu templates wird erfolgen um konsistent zu bleiben)) ein.
 Dafür macht das Script folgendes:
 1. Es startet einen UDP-Server auf Port 4242
