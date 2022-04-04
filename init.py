@@ -1,5 +1,5 @@
 import os
-from onboot import install_linux, InstallerConfiguration
+import shutil
 
 def init_current_config():
     if not os.path.exists("./current_config"):
@@ -12,6 +12,9 @@ def init_current_config():
             print("./current_config/" + str(week+1)+ "/"+ str(day+1)+".day")
             open("./current_config/" + str(week+1)+ "/"+ str(day+1)+".day","a").close()
 
+def is_raspberrypi():
+    return bool(input("Running on a raspberry Pi"))
+
 def add_one_gong():
      f = open("./current_config/1/1.day","w")
      f.write("0.00")
@@ -20,25 +23,31 @@ def add_one_gong():
 
 def autostart():
     cwd = os.getcwd()
-    sucessfull, _ = install_linux(InstallerConfiguration(cwd, "gong.py"))
-    
-    if not sucessfull:
-        print("gong could not be autostarted")
-    
-    # make more robust / volatile
-    sucessfull, _ = install_linux(InstallerConfiguration(cwd, "godot_wiht_args.sh"))
+    f = open("./launch.sh","w")
+    template = f.read()
+    template = template.replace("{dir}", cwd)
+    f.write(template)
 
-    if not sucessfull:
-        print("godot could not be autostarted")
+    f = open("./gong.desktop","w")
+    template = f.read()
+    template = template.replace("{dir}", cwd)
+    f.write(template)
+    shutil.copy("./Gong.desktop", "~/.config/autostart/Gong.desktop")
 
 def install_godot():
     # -L for following redirects https://stackoverflow.com/questions/46060010/download-github-release-with-curl
     # should be made more robust (newest releases up to 3.x.x)
-    os.system("curl -L https://github.com/hiulit/Unofficial-Godot-Engine-Raspberry-Pi/releases/download/v1.9.0/godot_3.4.2-stable_rpi4.zip --output godot.zip")
-    os.system("unzip godot.zip")
+    os.system("curl -L https://github.com/hiulit/Unofficial-Godot-Engine-Raspberry-Pi/releases/download/v1.9.0/godot_3.4.2-stable_rpi4.zip --output gui/godot.zip")
+    os.system("unzip gui/godot.zip")
+    os.rename("godot_3.4.2-stable_rpi4_editor_lto.bin", "godot.bin")
 
-init_current_config() 
+init_current_config()
 add_one_gong()
-install_godot()
+if is_raspberrypi()
+    install_godot()
+else:
+    print("please install godot manually")
+    print("install it in " + os.getcwd() + "/gui/godot.bin")
+    print("and mark it as executable")
 autostart()
 print("rebooting is recommended to check wether the installation worked")
