@@ -1,5 +1,4 @@
 import os
-import pickle
 import time
 import datetime
 import socket
@@ -195,17 +194,13 @@ def get_next_gong():
     print("loaded ./current_config/"+get_week_current()+"/"+get_day_of_week_current()+".day")
     next = datetime.date.today()
     while True:
-        while True:
-            gong_left_today = False
-            for line in day:
-                if string_to_time(next, line) > datetime.datetime.now():
-                    return string_to_time(next, line)
-                    gong_left_today = True
-            if day == [] or not gong_left_today:
-                next += datetime.timedelta(days=1)
-                day = load_day_unsafe("./current_config/"+str(next.isocalendar()[1])+"/"+str(next.isoweekday())+".day")
-                print("loaded ./current_config/"+str(next.isocalendar()[1])+"/"+str(next.isoweekday())+".day")
-                continue
+        for line in day:
+            if string_to_time(next, line) > datetime.datetime.now():
+                return string_to_time(next, line)
+        if day == []:
+            next += datetime.timedelta(days=1)
+            day = load_day_unsafe("./current_config/"+str(next.isocalendar()[1])+"/"+str(next.isoweekday())+".day")
+            print("loaded ./current_config/"+str(next.isocalendar()[1])+"/"+str(next.isoweekday())+".day")
     print("ERROR")
 
 def play_gong():

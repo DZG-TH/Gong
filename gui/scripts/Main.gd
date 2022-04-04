@@ -29,7 +29,6 @@ func _ready():
 	var seconds_to_next_day = 86400 - time_in_seconds
 	print("seconds to next day", seconds_to_next_day)
 	get_tree().create_timer(seconds_to_next_day).connect("timeout",ServerCommunicator,"update_current_day_of_week")
-	ServerCommunicator.connect("current_week_updated", self, "update_current_week")
 	ServerCommunicator.connect("current_day_of_week_updated", self, "update_current_day")
 
 func time_to_secs(time):
